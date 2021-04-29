@@ -24,7 +24,7 @@ public class Main {
             humanTurn();
             printMap();
             if (isWin(DOT_X)) {
-                System.out.println("Человек победил!");
+                System.out.println("Человек победил!:3");
                 break;
             }
             if (isMapFull()) {
