@@ -1,65 +1,100 @@
-package home.work;
-
-import java.util.Scanner;
+package Homework;
 
 public class Script {
 
+    private static final int REQUIRED_ARRAY_SIZE = 4;
+
+    private static final String[][] INCORRECT_SIZE = new String[][]{
+            {"5", "7", "3"},
+            {"2", "3", "4", "43"},
+            {"20", "15", "19", "16"},
+            {"8", "12", "14"},
+    };
+
+    private static final String[][] INCORRECT_VALUE = new String[][]{
+            {"1", "5", "6", "0"},
+            {"4", "9", "2", "4"},
+            {"312", "O", "8", "5"},
+            {"15", "14", "32k", "176"},
+    };
+
+    private static final String[][] CORRECT = new String[][]{
+            {"5", "10", "3", "4"},
+            {"5", "6", "4", "43"},
+            {"20", "15", "19", "22"},
+            {"2", "15", "11", "32"},
+    };
+
     public static void main(String[] args) {
-
-        Cat[] cats = {
-                new Cat("Cat1", (int) (Math.random()*13)),
-                new Cat("Cat2", (int) (Math.random()*9)),
-                new Cat("Cat3", (int) (Math.random()*5)),
-        };
-
-        Plate plate = new Plate((int) (Math.random()*20));
-
-        printInfo(cats, plate);
-        haveLunch(cats, plate);
-
-        printInfo(cats, plate);
-
-        addFood(plate);
-
-        System.out.println("Added food-> ");
-        plate.info();
-        System.out.println();
-
-        haveLunch(cats, plate);
-        printInfo(cats, plate);
-
-
-    }
-
-    private static void haveLunch(Cat[] cats, Plate plate) {
-        for (Cat cat : cats) {
-            boolean result = cat.eat(plate);
-            System.out.printf("Did %s need eat? The cat answer: %s%n", cat.getName(), result);
+        try {
+            int result = sumArrayValues(INCORRECT_SIZE);
+            System.out.println("----------------------------");
+            System.out.println("Сума всех чисел масива равна: " + result);
+            System.out.println("----------------------------");
+        } catch (SizeException e) {
+            System.err.println("Массив некоректного размера:(");
+            e.printStackTrace();
+        } catch (DataException e) {
+            System.err.println("В масиве указаны некоректные данные:(");
+            e.printStackTrace();
         }
-        System.out.println();
-    }
 
-    private static void printInfo(Cat... cats) {
-        for (Cat cat : cats) {
-            System.out.printf("Is %s hungry?(first appetite: %d) The cat answer: %s%n",
-                    cat.getName(),
-                    cat.getAppetite(),
-                    !cat.isSatiety());
+        try {
+            int result = sumArrayValues(INCORRECT_VALUE);
+            System.out.println("----------------------------");
+            System.out.println("Сума всех чисел масива равна: " + result);
+            System.out.println("----------------------------");
+        } catch (SizeException e) {
+            System.err.println("Массив некоректного размера:(");
+            e.printStackTrace();
+        } catch (DataException e) {
+            System.err.println("В масиве указаны некоректные данные:(");
+            e.printStackTrace();
+        }
+
+        try {
+            int result = sumArrayValues(CORRECT);
+            System.out.println("----------------------------");
+            System.out.println("Сума всех чисел масива равна: " + result);
+            System.out.println("----------------------------");
+        } catch (SizeException e) {
+            System.err.println("Массив некоректного размера:(");
+            e.printStackTrace();
+        } catch (DataException e) {
+            System.err.println("В масиве указаны некоректные данные:(");
+            e.printStackTrace();
         }
     }
 
-    private static void printInfo(Cat[] cats, Plate plate) {
-        System.out.println("----Information----");
-        plate.info();
-        printInfo(cats);
-        System.out.println("--------");
-        System.out.println();
+    private static void checkArraySize(String[][] data) {
+        if (data.length != REQUIRED_ARRAY_SIZE) {
+            throw new SizeException();
+        }
+
+        for (String[] row : data) {
+            if (row.length != REQUIRED_ARRAY_SIZE) {
+                throw new SizeException();
+            }
+        }
     }
 
-    private static void addFood(Plate plate) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("New food count: ");
-        int foodCount = scanner.nextInt();
-        plate.addFood(foodCount);
+    private static int sumArrayValues(String[][] data) throws SizeException, DataException {
+        checkArraySize(data);
+
+        int sumResult = 0;
+
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            String[] row = data[rowIndex];
+            for (int colIndex = 0; colIndex < row.length; colIndex++) {
+                String value = row[colIndex];
+                try {
+                    sumResult += Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    throw new DataException(value, rowIndex, colIndex);
+                }
+            }
+        }
+
+        return sumResult;
     }
 }
